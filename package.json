@@ -1,0 +1,34 @@
+{
+  "name": "potato-script",
+  "version": "1.0.0",
+  "description": "a small, fast and efficiency-based programming language for fast prototyping and more",
+  "main": "bin/shell.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "shell": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imagineeeinc/potato-script.git"
+  },
+  "keywords": [
+    "web",
+    "documentation",
+    "builder"
+  ],
+  "author": "imagineee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imagineeeinc/potato-script/issues"
+  },
+  "homepage": "https://github.com/imagineeeinc/potato-script#readme",
+  "bin": {
+    "potato": "bin/shell.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "fs-extra": "^9.1.0",
+    "prompt-sync": "^4.2.0",
+    "yargs": "^13.2.4"
+  }
+}
