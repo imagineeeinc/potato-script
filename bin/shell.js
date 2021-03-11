@@ -7,6 +7,7 @@ const fs = require('fs');
 const fse = require('fs-extra');
 const prompt = require('prompt-sync')({eot: true});//sigint: true
 const potato_run = require('./potato.js').run
+const print = require('./potato.js').print
 var ver = "1.0.0"
 console.log(chalk.cyan.bold(`
     _         _         _         _         _         _         _         _         _         _         _         _         _    
@@ -54,20 +55,22 @@ ver:                   output Version
 function shell() {
     console.log(chalk.blue(`Welcome to Potato Script v` + ver + `.`))
     for (i = 0; i < 1;) {
-        var result, error
+        var result, error, output
         var input = prompt(chalk.cyan.bold('>>>'));
         if (input == null){
             input = chalk.green("   [To exit, Ctrl+D or type ?.exit]")
         } else if (input == "?.exit"){
             process.exit()
         } else {
-            result, error = potato_run(input)
-            input = result
+            result = potato_run(input)
+            result = JSON.parse(result)
+            output = result[0]
+            error = result[1]
         }
-        if (error) {
-            console.log(chalk.red(error.asString()))
+        if (result[1] != null) {
+            console.log(chalk.red(result[1]))
         } else {
-            console.log(`${input}`);
+            console.log(result[0]);
         }
     }
     

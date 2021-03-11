@@ -6,22 +6,27 @@ const DIGITS = '0123456789'
 
 class Error {
     constructor(error_name, details) {
-        this.error_name = error_name;
+        this.error_name = error_name
         this.detatils = details
     }
 
     asString() {
-        var result = `${this.error_name}: ${this.details}`
+        var result = this.error_name + ': ' + this.details
         return result
     }
 }
 
 class illegalCharError {
     constructor(details) {
-        return details
+        this.det = details
+    }
+    string() {
+        return qError('Illegal Character', `${this.det} is not a integer or a floating point number`)
     }
 }
-
+function qError(error_name, details) {
+    return `${error_name}: ${details}`
+}
 //tokens
 
 var TT_INT		= 'INT'
@@ -56,52 +61,48 @@ class Lexar {
         this.advance()
     }
     advance() {
-        //TODO: fix number counter
         this.pos += 1
         this.cur_char = (this.pos < this.text.length) ? this.text[this.pos]:null
-        print(this.pos + "," + this.cur_char)
     }
     makeTokens() {
         var tokens = []
-        for (i = 0; this.cur_char != null;i++) {
+        
+        while (this.cur_char != null) {
             if ('\t'.includes(this.cur_char)) {
-                this.advance()
             } else if (DIGITS.includes(this.cur_char)) {
                 tokens.push(this.makeNumber())
-                this.advance()
             } else if (this.cur_char == "+") {
-                tokens.push(new Token(TT_PLUS))
+                tokens.push(new Token(TT_PLUS, "+"))
                 this.advance()
             } else if (this.cur_char == "-") {
-                tokens.push(new Token(TT_MINUS))
+                tokens.push(new Token(TT_MINUS, "-"))
                 this.advance()
             } else if (this.cur_char == "*") {
-                tokens.push(new Token(TT_MUL))
+                tokens.push(new Token(TT_MUL, "*"))
                 this.advance()
             } else if (this.cur_char == "/") {
-                tokens.push(new Token(TT_DIV))
+                tokens.push(new Token(TT_DIV, "/"))
                 this.advance()
             } else if (this.cur_char == "(") {
-                tokens.push(new Token(TT_LPAREN))
+                tokens.push(new Token(TT_LPAREN, "("))
                 this.advance()
             } else if (this.cur_char == ")") {
-                tokens.push(new Token(TT_RPAREN))
+                tokens.push(new Token(TT_RPAREN, ")"))
                 this.advance()
             } else {
                 var char = this.cur_char
-                this.advance()
-                return [], new illegalCharError("'" + char + "'")
+                var er = new illegalCharError(`'${char}'`)
+                //return [[], qError('Illegal Character', `[${this.pos}:${this.pos+1}]'${char}' is not a integer or a floating point number`)]
+                return [[], er.string()]
             }
-            print(this.cur_char)
-            print(tokens)
         }
-        return tokens, null
+        return [tokens, null]
     }
     makeNumber() {
         var num_str = ''
         var dot_count = 0
         var digs = DIGITS + '.'
-        for (i = 0; this.cur_char != null || digs.includes(this.cur_char);) {
+        while (digs.includes(this.cur_char)) {
             if (this.cur_char == '.') {
                 if (dot_count == 1) {} else {dot_count += 1}
                 num_str += '.'
@@ -121,8 +122,8 @@ class Lexar {
 
 function run(text) {
     var lexar = new Lexar(text)
-    var tokens, error = lexar.makeTokens()
-    return tokens, error
+    var tokens = lexar.makeTokens()
+    return JSON.stringify(tokens)
 }
 
 function _() {
@@ -135,7 +136,8 @@ module.exports = {
     Lexar,
     illegalCharError,
     Error,
-    run
+    run,
+    print
 }
 
 function print(text) {
