@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var ver = "1.0.0"
 const chalk = require('chalk');
 const yargs = require("yargs");
 const argv = require('yargs/yargs')(process.argv.slice(2)).argv
@@ -8,13 +9,18 @@ const fse = require('fs-extra');
 const prompt = require('prompt-sync')({eot: true});//sigint: true
 const potato_run = require('./potato.js').run
 const print = require('./potato.js').print
-var ver = "1.0.0"
+var setTitle = require('console-title');
+setTitle(`Potato Script v` + ver);
+
+//console.log(argv)
 console.log(chalk.cyan.bold(`
-    _         _         _         _         _         _         _         _         _         _         _         _         _    
-  _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__    _( )__ 
-_|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| _|     _| 
-(_ P _ (_ (_ O _ (_ (_ T _ (_ (_ A _ (_ (_ T _ (_ (_ O _ (_ (_   _ (_ (_ S _ (_ (_ C _ (_ (_ R _ (_ (_ I _ (_ (_ P _ (_ (_ T _ (_ 
-|_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__|  |_( )__| 
+
+██████╗░░█████╗░████████╗░█████╗░████████╗░█████╗░  ░██████╗░█████╗░██████╗░██╗██████╗░████████╗
+██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗╚══██╔══╝██╔══██╗  ██╔════╝██╔══██╗██╔══██╗██║██╔══██╗╚══██╔══╝
+██████╔╝██║░░██║░░░██║░░░███████║░░░██║░░░██║░░██║  ╚█████╗░██║░░╚═╝██████╔╝██║██████╔╝░░░██║░░░
+██╔═══╝░██║░░██║░░░██║░░░██╔══██║░░░██║░░░██║░░██║  ░╚═══██╗██║░░██╗██╔══██╗██║██╔═══╝░░░░██║░░░
+██║░░░░░╚█████╔╝░░░██║░░░██║░░██║░░░██║░░░╚█████╔╝  ██████╔╝╚█████╔╝██║░░██║██║██║░░░░░░░░██║░░░
+╚═╝░░░░░░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░  ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝╚═╝░░░░░░░░╚═╝░░░
 `))
 /*
 if (argv._.indexOf("init") > -1) {
@@ -25,14 +31,13 @@ if (argv._.indexOf("init") > -1) {
     } else {
         console.log(chalk.red.bold("you must provide a name for the project like this:\n") + chalk.blue.bold("snowie init <project-name>") + chalk.red.bold("\ngo to: <docs link> to learn more"));
     }
-} else*/ if (argv._.indexOf("help") > -1) {
+} else*/ if (argv.h == true) {
     help()
 } else if (argv._.indexOf("ver") > -1) {
     console.log(chalk.bold.green("version: v" + ver))
 } else {
-    shell()
+    shell(argv.alterFn)
 }
-//console.log(argv)
 
 function help() {
     console.log(chalk.cyan.bold(`
@@ -45,33 +50,42 @@ chalk.bgBlue.yellow.bold("Syntax: potato [options] <flags> [file...]") +
 chalk.cyan.bold(`\n
 Examples: potato
           potato -c filename.potato
-help:                  output usage information
-ver:                   output Version
--c:                    compiles file given
-@<file>                the file that will be compiled or executed`));
+-h:                     output usage information
+ver:                    output Version
+-c:                     compiles file given
+--alter-fn=<alterfile>: replace alterfile with a custom file name or
+                        input so errors will be switched for your custom name
+@<file>                 the file that will be compiled or executed`));
 }
 //console.log(argv);
 
-function shell() {
+function shell(alterfile) {
+    var fn = '<stdin>'
+    if (alterfile != undefined) {
+        fn = alterfile
+    }
     console.log(chalk.blue(`Welcome to Potato Script v` + ver + `.`))
     for (i = 0; i < 1;) {
         var result, error, output
         var input = prompt(chalk.cyan.bold('>>>'));
         if (input == null){
             input = chalk.green("   [To exit, Ctrl+D or type ?.exit]")
+            result = [input]
         } else if (input == "?.exit"){
             process.exit()
         } else {
-            result = potato_run(input)
-            result = JSON.parse(result)
+            result = potato_run(input, fn)
+            result = result//JSON.parse(result)
             output = result[0]
             error = result[1]
         }
         if (result[1] != null) {
             console.log(chalk.red(result[1]))
         } else {
-            console.log(result[0]);
+            console.log(result);//result[0]
         }
     }
     
 }
+
+function compile() {}

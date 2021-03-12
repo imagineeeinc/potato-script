@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "chalk": "^4.1.0",
+    "console-title": "^1.1.0",
     "fs-extra": "^9.1.0",
     "prompt-sync": "^4.2.0",
     "yargs": "^13.2.4"
